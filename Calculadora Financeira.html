@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="div_mensagem">
+        <h1>Calcule sua economia utilizando nossa solução</h1>
+        <div>
+        Insira seu tipo de produção:<br>
+        <input type="text" placeholder="Lavoura, pastagem ou perene" name="" id="input_tipoProd"><br><br>
+        Insira sua área total (em hectares):<br>
+        <input type="number" name="" id="input_areaTotal"><br><br>
+        Insira seu lucro líquido mensal (por hectare):<br>
+        <input type="number" name="" id="input_lucroMensal"><br><br>
+        <input type="checkbox" name="" id="input_TecPrevent"> <i>Já utiliza técnica de prevenção</i><br>
+        <input type="checkbox" name="" id="input_VegNativa"> <i>Vegetacão nativa presente</i><br>
+        <input type="checkbox" name="" id="input_TerraInd"> <i>Proximidade com terras indígenas</i><br><br>
+    </div>
+    <div>
+        <button onclick="calcular_economia()">Calcule sua economia!</button>
+        <div id="div_mensagem2"></div>
+    </div>
+
+    </div>
+    <div id="div_msgTerraIndigena"></div>
+    
+</body>
+<script>
+    //Variáveis Globais
+
+    //Valores das multas
+    var multasAgro = 3000
+    var multasNativa = 10000
+
+    //Custos de recuperação por hectare
+    var custo_lavoura = 800
+    var custo_pastagem = 4400
+    var custo_perene = 6000
+    var custo_nativa = 17000
+    
+    //Calculos de prejuizo
+    var prejuizoProd = 0
+    var prejuizoNativa = 0
+    var prejuizoBrutoTotal = 0
+    var prejuizoEsperadoSSensor = 0
+    var prejuizoEsperadoCSensor = 0
+
+    //Calculo de economia
+    var economiaTotal = 0
+
+    //Meses de recuperação (consequentemente sem produção)
+    var mesesRecuperacao = 0
+
+    function calcular_economia(){
+        var tipoProd = input_tipoProd.value.toLowerCase()
+        var areaTotal = Number(input_areaTotal.value)
+        var lucroMensal = Number(input_lucroMensal.value)
+        var tecPrevent = input_TecPrevent.checked
+        var vegNativa = input_VegNativa.checked
+        var TerraInd = input_TerraInd.checked
+
+       // Definição de probabilidade de incendio de acordo com o tam do produtor
+        if (areaTotal <= 200) {
+            var probIncendioBase = 0.15
+            
+        } else {
+            probIncendioBase = 0.2
+        }
+
+        // Se usar tecnicas de prevenção, o risco reduz em 30%
+        if (tecPrevent) {
+            var probIncendioAjustada = probIncendioBase * 0.7
+        } else {
+            probIncendioAjustada = probIncendioBase
+        }
+
+        //Definição de área nativa x área produtiva
+
+        var areaNativa = 0;
+        var areaProd = areaTotal
+
+        if (vegNativa) {
+            areaNativa = areaTotal * 0.2
+            areaProd = areaTotal - areaNativa
+        } 
+
+        //Definição dos prejuizos baseados no tipo de produção e se a checkbox "Nativa" foi marcada
+        if (tipoProd == "lavoura") {
+            mesesRecuperacao = 6
+            prejuizoProd = (lucroMensal * mesesRecuperacao) + custo_lavoura + multasAgro
+    
+        } else {
+            if (tipoProd == "pastagem") {
+                prejuizoProd = (lucroMensal * mesesRecuperacao) + custo_pastagem + multasAgro
+            } else {
+                if (tipoProd == "perene") {
+                 prejuizoProd = (lucroMensal * mesesRecuperacao) + custo_perene + multasAgro
+                } else {
+                    div_mensagem2.innerHTML = "As opções de tipo de produção são apenas lavoura, pastagem ou perene!"
+                }
+            }
+        }
+
+        if (vegNativa) {
+            //O valor de lucro da vegetação nativa é 0 pois não há cultivo ou criação
+            prejuizoNativa = custo_nativa + multasNativa
+        } else { prejuizoNativa = 0}
+
+        //Prejuízo bruto total (multiplicando pela quantidade de hectares)
+        prejuizoBrutoTotal = (prejuizoProd * areaProd) + (prejuizoNativa * areaNativa)
+
+        //Prejuízo esperado sem o uso do sensor
+        prejuizoEsperadoSSensor = prejuizoBrutoTotal * probIncendioAjustada
+
+        //Prejuízo esperado com o uso do sensor 
+        // 50% de economia é um valor conservador baseado em literaturas técnicas de dispositivos tecnológicos de prevenção
+        prejuizoEsperadoCSensor = prejuizoEsperadoSSensor * 0.5
+
+        //Economia total com o uso do sensor 
+        economiaTotal = prejuizoEsperadoSSensor - prejuizoEsperadoCSensor
+
+
+        div_mensagem.innerHTML = `Se a sua área de ${areaTotal} hectares for atingida por um incêndio, o prejuízo esperado chega a R$${prejuizoEsperadoSSensor.toFixed(2)}.<br>
+        Com o nosso sensor IoT para monitoramento da umidade do solo, esse valor cai para R$${prejuizoEsperadoCSensor.toFixed(2)}.<br>
+        Na prática, você evita perder R$${economiaTotal.toFixed(2)}, uma redução de cerca de 50% nas perdas.<br>
+        Sem prevenção, o fogo consome sua produção e seu bolso. Com prevenção, você transforma um risco catastrófico em um impacto controlável.`
+
+        if (TerraInd) {div_msgTerraIndigena.innerHTML = "<i>Em áreas com presença de terras indígenas, as penalidades podem ser significativamente maiores que as estimadas pela calculadora, incluindo custos legais adicionais não contemplados neste modelo.</i>"
+
+        }
+
+    }
+
+</script>
+</html>
