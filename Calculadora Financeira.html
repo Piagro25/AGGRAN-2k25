@@ -33,6 +33,7 @@
 
     </div>
     <div id="div_msgTerraIndigena"></div>
+    <div id="div_mensagem3"></div>
 
 </body>
 <script>
@@ -134,12 +135,14 @@
         Com o nosso sensor IoT para monitoramento da umidade do solo, esse valor cai para ${prejuizoEsperadoCSensor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}.<br>
         Na prática, você evita perder ${economiaTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}, uma economia de cerca de 50%*!<br>
         Sem prevenção, o fogo consome sua produção e seu bolso. Com prevenção, você transforma um risco catastrófico em um impacto controlável.<br>
-        <h6>*Cálculos utilizam valores conservadores baseados em literatura técnica.</h6>`
+        `
+        div_mensagem3.innerHTML = `<h6>*Cálculos utilizam valores conservadores baseados em literatura técnica.</h6>`
 
         if (TerraInd) {
             div_msgTerraIndigena.innerHTML = "<i>Em áreas com presença de terras indígenas, as penalidades podem ser significativamente maiores que as estimadas pela calculadora, incluindo custos legais adicionais não contemplados neste modelo.</i>"
 
         }
+
 
     }
 
